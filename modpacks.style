@@ -201,3 +201,49 @@ pre{
 @media (max-width:880px){
   .hero{grid-template-columns:1fr;}
 }
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  header p {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modpack-card {
+    margin: 10px 0;
+    padding: 15px;
+  }
+
+  .modpack-card h2 {
+    font-size: 1.4rem;
+  }
+
+  .modpack-card p {
+    font-size: 1rem;
+  }
+
+  .container {
+    width: 100%;
+    padding: 0;
+  }
+
+  footer {
+    font-size: 0.9rem;
+    text-align: center;
+  }
+}
+
