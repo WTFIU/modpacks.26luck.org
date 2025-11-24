@@ -1,1 +1,272 @@
-miles
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>modpacks.26luck.org — Modpacks Hub</title>
+  <meta name="description" content="Curated modpacks for multiple games — easy installs, verified builds, and regular updates. Hosted by 26luck." />
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#5eead4;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#e6eef6;background:linear-gradient(180deg,#071026 0%, #081428 100%)}
+    .wrap{max-width:1100px;margin:2rem auto;padding:1rem}
+    header{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .brand{display:flex;align-items:center;gap:0.75rem}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;color:#052025;font-weight:700}
+    h1{margin:0;font-size:1.35rem}
+    .tag{color:var(--muted);font-size:0.9rem}
+
+    .hero{margin-top:1.25rem;padding:1.25rem;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));box-shadow:0 6px 30px rgba(2,6,23,0.6);display:grid;grid-template-columns:1fr 320px;gap:1rem}
+    .hero p{color:var(--muted);margin-top:.5rem}
+
+    .searchBox{display:flex;gap:.5rem;background:var(--card);padding:.6rem;border-radius:10px;align-items:center}
+    .searchBox input{flex:1;background:transparent;border:0;color:inherit;padding:.5rem;font-size:1rem;outline:none}
+    .select{background:transparent;border:0;color:var(--muted);padding:.5rem}
+
+    .controls{display:flex;gap:.5rem;align-items:center}
+    .btn{background:var(--accent);color:#052025;padding:.5rem .75rem;border-radius:8px;border:0;font-weight:600;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:.45rem .6rem;border-radius:8px;color:var(--muted);cursor:pointer}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1rem}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:12px;padding:1rem;border:1px solid rgba(255,255,255,0.03)}
+    .card h3{margin:.25rem 0}
+    .meta{color:var(--muted);font-size:0.9rem}
+    .tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+    .tagPill{background:var(--glass);padding:.25rem .5rem;border-radius:999px;font-size:0.8rem;color:var(--muted)}
+    .cardActions{display:flex;gap:.5rem;margin-top:1rem}
+    .linkBtn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:.45rem .6rem;border-radius:8px;color:var(--accent);text-decoration:none;font-weight:600}
+
+    footer{margin-top:2rem;padding:1rem;border-radius:10px;color:var(--muted);font-size:0.9rem;display:flex;justify-content:space-between;align-items:center}
+    .small{font-size:0.85rem;color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:880px){.hero{grid-template-columns:1fr}}
+
+    /* simple modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);padding:2rem}
+    .modal.active{display:flex}
+    .modalCard{background:#071427;padding:1.25rem;border-radius:12px;max-width:740px;width:100%;border:1px solid rgba(255,255,255,0.04)}
+    pre{background:#02101a;padding:1rem;border-radius:8px;overflow:auto;color:#cdeff0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">26</div>
+        <div>
+          <h1>modpacks.26luck.org</h1>
+          <div class="tag">Curated mod packs for multiple games • Hosted by 26luck</div>
+        </div>
+      </div>
+      <nav class="controls">
+        <a class="ghost" href="https://26luck.org" target="_blank" rel="noopener">26luck main</a>
+        <button class="btn" id="supportBtn">Support</button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h2>Mod packs for every game — curated, tested, and easy to install</h2>
+        <p>Find packs by game, use case, or performance goal. Click any pack to view details, installation steps, and the download link.</p>
+
+        <div style="margin-top:1rem" class="searchBox">
+          <input id="search" placeholder="Search packs, games, authors..." aria-label="search" />
+          <select id="filterGame" class="select" aria-label="filter by game">
+            <option value="">All games</option>
+          </select>
+          <button class="ghost" id="clearBtn">Clear</button>
+        </div>
+
+        <div style="margin-top:1rem;display:flex;gap:.5rem;align-items:center">
+          <div class="small">Sort:</div>
+          <select id="sort" class="select">
+            <option value="featured">Featured</option>
+            <option value="recent">Most recent</option>
+            <option value="downloads">Most downloads</option>
+          </select>
+        </div>
+
+        <div class="grid" id="packsGrid" aria-live="polite" style="margin-top:1rem"></div>
+      </div>
+
+      <aside style="padding:1rem;border-left:1px solid rgba(255,255,255,0.02)">
+        <h3>Quick Links</h3>
+        <ul class="small">
+          <li><a href="/license">License & No-Copy Policy</a></li>
+          <li><a href="#" id="requestPack">Request a pack</a></li>
+          <li><a href="#" id="reportIssue">Report an issue</a></li>
+        </ul>
+
+        <div style="margin-top:1rem">
+          <h4>Support</h4>
+          <p class="small">Contact: <a href="mailto:top.desk@support.26luck.org">top.desk@support.26luck.org</a></p>
+        </div>
+
+        <div style="margin-top:1rem">
+          <h4>Featured</h4>
+          <div class="card" style="padding:.6rem">
+            <strong>26luck Essentials Pack</strong>
+            <div class="meta">A balanced starter pack for general use.</div>
+            <div style="margin-top:.5rem"><a class="linkBtn" href="/packs/26luck-essentials">View pack</a></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <div class="small">© 2025–2026 26luck — All rights reserved. See <a href="/license">License</a>.</div>
+      <div class="small">Hosted under <a href="https://26luck.org">26luck.org</a></div>
+    </footer>
+  </div>
+
+  <!-- modal for pack details -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true">
+    <div class="modalCard">
+      <div id="modalContent"></div>
+      <div style="margin-top:1rem;text-align:right">
+        <button class="ghost" id="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Example data — replace with real data or API fetch
+    const packs = [
+      {
+        id: '26luck-essentials',
+        name: '26luck Essentials Pack',
+        game: 'Multi-game',
+        description: 'A balanced starter pack suitable across multiple games — quality-of-life, performance tweaks, and popular mods.',
+        version: '1.0.2',
+        downloads: 2140,
+        date: '2025-09-10',
+        tags: ['starter','performance','stable'],
+        page: '/packs/26luck-essentials'
+      },
+      {
+        id: 'ultra-performance',
+        name: 'Ultra Performance Build',
+        game: 'Sandbox',
+        description: 'Optimized for low-end machines with aggressive performance mods and stripped configs.',
+        version: '2.4.0',
+        downloads: 4890,
+        date: '2025-10-02',
+        tags: ['performance','low-spec'],
+        page: '/packs/ultra-performance'
+      },
+      {
+        id: 'exploration-plus',
+        name: 'Exploration+',
+        game: 'Adventure RPG',
+        description: 'Adds exploration-focused mods: new biomes, traversal tools, and discovery mechanics.',
+        version: '0.9.8',
+        downloads: 1330,
+        date: '2025-07-18',
+        tags: ['exploration','biomes','fun'],
+        page: '/packs/exploration-plus'
+      },
+      {
+        id: 'chaoscraft',
+        name: 'ChaosCraft Beta',
+        game: 'Sandbox',
+        description: 'A chaotic playstyle pack for players who enjoy unpredictable mechanics and fast-paced changes.',
+        version: '0.8.1-beta',
+        downloads: 720,
+        date: '2025-11-12',
+        tags: ['chaos','experimental'],
+        page: '/packs/chaoscraft'
+      }
+    ];
+
+    const packsGrid = document.getElementById('packsGrid');
+    const filterGame = document.getElementById('filterGame');
+    const searchInput = document.getElementById('search');
+    const sortSel = document.getElementById('sort');
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modalContent');
+
+    function uniqueGames(list){
+      const s = new Set(list.map(p=>p.game));
+      return Array.from(s).sort();
+    }
+
+    function renderFilters(){
+      const games = uniqueGames(packs);
+      games.forEach(g=>{
+        const opt = document.createElement('option'); opt.value = g; opt.textContent = g; filterGame.appendChild(opt);
+      });
+    }
+
+    function render(){
+      packsGrid.innerHTML = '';
+      const q = searchInput.value.trim().toLowerCase();
+      const gameFilter = filterGame.value;
+      let list = packs.filter(p=>{
+        if(gameFilter && p.game !== gameFilter) return false;
+        if(!q) return true;
+        return (p.name + ' ' + p.description + ' ' + p.tags.join(' ') + ' ' + p.game).toLowerCase().includes(q);
+      });
+      const sortBy = sortSel.value;
+      if(sortBy==='downloads') list.sort((a,b)=>b.downloads - a.downloads);
+      else if(sortBy==='recent') list.sort((a,b)=> new Date(b.date) - new Date(a.date));
+      else list.sort((a,b)=> b.downloads - a.downloads); // featured uses downloads as fallback
+
+      if(list.length===0){
+        packsGrid.innerHTML = '<div class="card">No packs found. Try clearing filters or searching different keywords.</div>';
+        return;
+      }
+
+      list.forEach(p=>{
+        const el = document.createElement('article'); el.className='card';
+        el.innerHTML = `
+          <div style="display:flex;gap:.75rem;align-items:center">
+            <div style="width:56px;height:56px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;color:#052025">${p.name.split(' ').slice(0,2).map(x=>x[0]).join('')}</div>
+            <div style="flex:1">
+              <h3>${p.name}</h3>
+              <div class="meta">${p.game} • v${p.version} • ${p.downloads.toLocaleString()} downloads</div>
+            </div>
+          </div>
+          <p class="meta" style="margin-top:.5rem">${p.description}</p>
+          <div class="tags">${p.tags.map(t=>`<span class="tagPill">${t}</span>`).join('')}</div>
+          <div class="cardActions">
+            <a class="linkBtn" href="${p.page}">View pack</a>
+            <button class="ghost" data-id="${p.id}" aria-label="quick install">Quick install</button>
+          </div>
+        `;
+        packsGrid.appendChild(el);
+      });
+    }
+
+    // modal actions
+    function openModal(html){ modalContent.innerHTML = html; modal.classList.add('active'); }
+    function closeModal(){ modal.classList.remove('active'); modalContent.innerHTML=''; }
+
+    document.addEventListener('click', e=>{
+      if(e.target.matches('.ghost[data-id]')){
+        const id = e.target.getAttribute('data-id');
+        const p = packs.find(x=>x.id===id);
+        if(!p) return;
+        openModal(`<h3>${p.name}</h3><div class="meta">${p.game} • v${p.version} • ${p.downloads.toLocaleString()} downloads</div><p style="margin-top:.75rem">${p.description}</p><h4>Quick install</h4><pre>1. Download: ${p.page}/download\n2. Follow the included README for your launcher\n3. Run once to generate configs</pre><div style="margin-top:.5rem"><a class="btn" href="${p.page}">Open full pack page</a></div>`);
+      }
+      if(e.target.id==='closeModal' || e.target.id==='modal') closeModal();
+    });
+
+    // UI bindings
+    searchInput.addEventListener('input', render);
+    filterGame.addEventListener('change', render);
+    sortSel.addEventListener('change', render);
+    document.getElementById('clearBtn').addEventListener('click', ()=>{ searchInput.value=''; filterGame.value=''; sortSel.value='featured'; render(); });
+    document.getElementById('supportBtn').addEventListener('click', ()=>{ openModal('<h3>Support</h3><p class="meta">Contact: <a href="mailto:top.desk@support.26luck.org">top.desk@support.26luck.org</a></p>'); });
+    document.getElementById('requestPack').addEventListener('click', (e)=>{ e.preventDefault(); openModal('<h3>Request a pack</h3><p class="meta">Send your request to <a href="mailto:top.desk@support.26luck.org">top.desk@support.26luck.org</a> with game name, desired mods, and priority.</p>'); });
+    document.getElementById('reportIssue').addEventListener('click', (e)=>{ e.preventDefault(); openModal('<h3>Report an issue</h3><p class="meta">Found a broken download or bad file? Email <a href="mailto:top.desk@support.26luck.org">top.desk@support.26luck.org</a> with pack name and details.</p>'); });
+
+    // init
+    renderFilters();
+    render();
+
+    // accessibility: close modal with ESC
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>
